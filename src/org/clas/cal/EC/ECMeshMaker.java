@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import org.clas.cal.tools.MyMeshView;
 import org.clas.cal.tools.Prism2Dto3DMesh;
 
 import javafx.scene.Group;

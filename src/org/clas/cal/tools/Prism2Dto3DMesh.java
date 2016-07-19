@@ -1,6 +1,5 @@
 package org.clas.cal.tools;
 
-import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
 
 
@@ -126,7 +125,7 @@ public class Prism2Dto3DMesh extends TriangleMesh{
 	
 	public int[] findallfaces()
 	{
-		int numtopvert = numpoints/2;
+		//int numtopvert = numpoints/2;
 		int numtopfaces = (numpoints-2)/2;
 		int numbotfaces = (numpoints-2)/2;
 		int numsidefaces = (numpoints/2  - 1) * 2; //remove center vertex
