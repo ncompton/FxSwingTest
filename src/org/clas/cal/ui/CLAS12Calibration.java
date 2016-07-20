@@ -1,15 +1,9 @@
 package org.clas.cal.ui;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Map;
-import java.util.Scanner;
-
 
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.clas.cal.EC.ECCal;
 import org.clas.cal.EC.ECMeshMaker;
@@ -31,7 +25,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
 
 public class CLAS12Calibration {
@@ -281,7 +274,6 @@ public class CLAS12Calibration {
 	
 	
     public static void main(String[] args) {
-    	System.out.println("running CLAS12Calibration");
     	CLAS12Calibration cal = new CLAS12Calibration();
     	
     	

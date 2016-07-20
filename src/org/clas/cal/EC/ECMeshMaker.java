@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import org.clas.cal.tools.Prism2Dto3DMesh;
-
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -14,6 +12,7 @@ import javafx.scene.paint.PhongMaterial;
 //create front and back of object
 //make an ECMeshView per pixel
 //have a function to add all ECMeshViews to the passed group
+//right now it just reads in files...
 public class ECMeshMaker {
 
 	public ECMeshMaker() {
