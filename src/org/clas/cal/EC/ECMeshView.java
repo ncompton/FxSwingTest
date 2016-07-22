@@ -10,6 +10,7 @@ public class ECMeshView extends MeshView{
 
 	private double volume = 0.f;
 	private float length = 0.f;
+	private Point3D centfrontface;
 	
 	public ECMeshView() {
 		super();
@@ -22,6 +23,7 @@ public class ECMeshView extends MeshView{
 	public ECMeshView(int np, float[] x, float[] y, float[] z) {
 		super();
 		Prism2Dto3DMesh premesh = new Prism2Dto3DMesh(np, x, y, z);
+		centfrontface = new Point3D(premesh.x[0],premesh.y[0],premesh.z[0]);
 		this.volume = VolumeOfMesh(premesh);
 		this.length = premesh.length;
 		this.setMesh(premesh.getMesh());
@@ -38,6 +40,10 @@ public class ECMeshView extends MeshView{
 	
 	public float getLength(){
 		return this.length;
+	}
+	
+	public Point3D getFaceCenter(){
+		return this.centfrontface;
 	}
 	
 	public double SignedVolumeOfTriangle(Point3D p1, Point3D p2, Point3D p3) {

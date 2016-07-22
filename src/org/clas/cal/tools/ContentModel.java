@@ -1,7 +1,10 @@
 package org.clas.cal.tools;
 
+import org.clas.cal.EC.ECMeshView;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Point3D;
 import javafx.geometry.Side;
 import javafx.scene.AmbientLight;
 import javafx.scene.Group;
@@ -235,22 +238,47 @@ public class ContentModel {
 //            	PickResult res = event.getPickResult();
 //            }
             if(event.isSecondaryButtonDown()){
-            	System.out.println("Button Clicked");
+            	//System.out.println("Button Clicked");
                 PickResult res = event.getPickResult();
                 if (res.getIntersectedNode() != null){
-                	System.out.println("Node Selected");
+                	//System.out.println("Node Selected");
                 	ContextMenu contextMenu = new ContextMenu();
-                	MenuItem cut = new MenuItem("Cut");
-                	MenuItem copy = new MenuItem("Copy");
-                	MenuItem paste = new MenuItem("Paste");
+                	
+                	MenuItem rescam = new MenuItem("Reset Camera");
+                	MenuItem centcam = new MenuItem("Center Camera");
 
-                	contextMenu.getItems().addAll(cut, copy, paste);
+                	contextMenu.getItems().addAll(rescam,centcam);
                 	contextMenu.show(res.getIntersectedNode(), event.getScreenX(), event.getScreenY());
                 	
                 	
-                	cut.setOnAction(new EventHandler<ActionEvent>() {
+                	centcam.setOnAction(new EventHandler<ActionEvent>() {
                 	    public void handle(ActionEvent e) {
-                	        System.out.println("Cut...");
+                	    	if (res.getIntersectedNode() instanceof ECMeshView){
+	                	    	Point3D localpoint;
+	                	    	localpoint = ((ECMeshView)res.getIntersectedNode()).getFaceCenter();
+	                	    	double veclength = localpoint.getX()*localpoint.getX();
+	                	    	veclength += localpoint.getY()*localpoint.getY();
+	                	    	veclength += localpoint.getZ()*localpoint.getZ();
+	                	    	veclength = Math.sqrt(veclength);
+	                	    	
+	                	    	double loc[] = {(localpoint.getX()/veclength)*(veclength-10.0),
+	                	    			        (localpoint.getY()/veclength)*(veclength-10.0),
+	                	    			        (localpoint.getZ()/veclength)*(veclength-10.0)};
+	                	    			        
+	                	    	Point3D movecam = new Point3D(loc[0],loc[1],loc[2]);
+	                	    	double rot[] = new double[2];
+	                	    	
+	                	    	rot[0] = Math.atan(localpoint.getY()/localpoint.getZ())*180.0/3.141592654;
+	                	    	rot[1] = 180.0 + Math.atan(localpoint.getX()/localpoint.getZ())*180.0/3.141592654;
+
+	                	    	centerCam(movecam, rot);
+                	    	}
+                	    }
+                	});
+                	
+                	rescam.setOnAction(new EventHandler<ActionEvent>() {
+                	    public void handle(ActionEvent e) {
+                	    	resetCam();
                 	    }
                 	});
                 	
@@ -326,11 +354,28 @@ public class ContentModel {
     public void resetCam(){
         cameraXform.ry.setAngle(0.0);
         cameraXform.rx.setAngle(0.0);
-        cameraPosition.setZ(-2d*dimModel);
+        cameraPosition.setZ(-2f*dimModel);
+        cameraPosition.setY(-dimModel);
         cameraXform2.t.setX(0.0);
         cameraXform2.t.setY(0.0);
-        cameraXform.setRx(-30.0);
-        cameraXform.setRy(30);
+        cameraXform.setRx(-10.0);
+        cameraXform.setRy(180);
+    }
+    
+    public void centerCam(Point3D movecam, double[] rot){
+        cameraXform.ry.setAngle(0.0);
+        cameraXform.rx.setAngle(0.0);
+        
+        cameraPosition.setZ(0.0);
+        cameraPosition.setY(0.0);
+        cameraPosition.setX(0.0);
+        
+        cameraXform2.t.setX(0.0);
+        cameraXform2.t.setY(0.0);
+        cameraXform.setRx(rot[0]);
+        cameraXform.setRy(rot[1]);
+        cameraPosition.transform(movecam);
+        
     }
 
 }

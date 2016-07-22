@@ -6,9 +6,9 @@ import javafx.scene.shape.TriangleMesh;
 public class Prism2Dto3DMesh extends TriangleMesh{
 	
 	private int numpoints;
-	private float[] x;
-	private float[] y;
-	private float[] z;
+	public float[] x;
+	public float[] y;
+	public float[] z;
 	public float length;
 
 	public Prism2Dto3DMesh() {
