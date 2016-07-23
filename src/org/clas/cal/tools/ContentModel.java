@@ -256,22 +256,12 @@ public class ContentModel {
                 	    	if (res.getIntersectedNode() instanceof ECMeshView){
 	                	    	Point3D localpoint;
 	                	    	localpoint = ((ECMeshView)res.getIntersectedNode()).getFaceCenter();
-	                	    	double veclength = localpoint.getX()*localpoint.getX();
-	                	    	veclength += localpoint.getY()*localpoint.getY();
-	                	    	veclength += localpoint.getZ()*localpoint.getZ();
-	                	    	veclength = Math.sqrt(veclength);
-	                	    	
-	                	    	double loc[] = {(localpoint.getX()/veclength)*(veclength-10.0),
-	                	    			        (localpoint.getY()/veclength)*(veclength-10.0),
-	                	    			        (localpoint.getZ()/veclength)*(veclength-10.0)};
-	                	    			        
-	                	    	Point3D movecam = new Point3D(loc[0],loc[1],loc[2]);
 	                	    	double rot[] = new double[2];
 	                	    	
 	                	    	rot[0] = Math.atan(localpoint.getY()/localpoint.getZ())*180.0/3.141592654;
 	                	    	rot[1] = 180.0 + Math.atan(localpoint.getX()/localpoint.getZ())*180.0/3.141592654;
 
-	                	    	centerCam(movecam, rot);
+	                	    	centerCam(rot);
                 	    	}
                 	    }
                 	});
@@ -362,7 +352,7 @@ public class ContentModel {
         cameraXform.setRy(180);
     }
     
-    public void centerCam(Point3D movecam, double[] rot){
+    public void centerCam(double[] rot){
         cameraXform.ry.setAngle(0.0);
         cameraXform.rx.setAngle(0.0);
         
@@ -372,10 +362,10 @@ public class ContentModel {
         
         cameraXform2.t.setX(0.0);
         cameraXform2.t.setY(0.0);
+        cameraXform2.t.setZ(0.0);
         cameraXform.setRx(rot[0]);
         cameraXform.setRy(rot[1]);
-        cameraPosition.transform(movecam);
-        
+
     }
 
 }
