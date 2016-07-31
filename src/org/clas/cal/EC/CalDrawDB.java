@@ -1423,7 +1423,7 @@ public class CalDrawDB{
 		    			xPoint[sector][l][n][j] =  point1.x();
 		    			yPoint[sector][l][n][j] = -point1.y();
 		    		}
-		    		System.out.println(point1.z());
+		    		//System.out.println(point1.z());
 	    			n++;
 		    	}
 		    }

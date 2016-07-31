@@ -1,6 +1,7 @@
 package org.clas.cal.ui;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
@@ -35,7 +36,9 @@ public class CLAS12Calibration {
 	static Group detGroup = null;
 	
 	//variable to note which detectors are in use
-	static int isEC = 0,isPCAL = 0,isFTOF = 0;
+	static AtomicInteger isEC = new AtomicInteger();
+	static AtomicInteger isPCAL = new AtomicInteger();
+	static AtomicInteger isFTOF = new AtomicInteger();
 	
 	//current selected objects
 	String detID;
@@ -91,6 +94,9 @@ public class CLAS12Calibration {
 	}
 	
 	public void initDet(){
+		isEC.set(0);
+		isPCAL.set(0);
+		isFTOF.set(0);
 		JFrame frame = new JFrame("JavaFX");
         final JFXPanel fxPanel = new JFXPanel();
         fxPanel.setScene(Detectorpanel(500, 500));
@@ -114,24 +120,41 @@ public class CLAS12Calibration {
         
         //these button can eventually turn on and off detector plugins
         Button  btnClear = new Button("Clear");
-        btnClear.setOnAction(event -> {setAllDetOff();});
+        btnClear.setOnAction(event -> {
+        	setAllDetOff();
+        });
         
         Button  btnLoadFtof = new Button("FTOF");
-        btnLoadFtof.setOnAction(event -> {loadDetector("FTOF");isFTOF=1;});
-        
-        //Button  btnLoadEC = new Button("EC");
-        //btnLoadEC.setOnAction(event -> {testEC();isEC=1;System.out.println("isEC: " + isEC);});
+        btnLoadFtof.setOnAction(event -> {
+        	loadDetector("FTOF");
+        	isFTOF.set(1);
+        });
         
         Button  btnLoadECpix = new Button("ECpix");
-        btnLoadECpix.setOnAction(event -> {if(isEC==0){ECdet = new ECMeshMaker();ECdet.addECpix(detGroup);ECcal = new ECCal();isEC=1;}});
+        btnLoadECpix.setOnAction(event -> {
+        	if(isEC.get() == 0)
+        	{
+        		ECdet = new ECMeshMaker();
+        		ECcal = new ECCal();
+        	}
+        	if(isEC.get() >= 0 && isEC.get() < 6)
+        		ECdet.addECpix(detGroup,(int)isEC.incrementAndGet());
+        	
+        });
         
         Button  btnLoadPCALpix = new Button("PCALpix");
-        btnLoadPCALpix.setOnAction(event -> {ECdet = new ECMeshMaker();ECdet.addPCALpix(detGroup);isPCAL=1;});
+        btnLoadPCALpix.setOnAction(event -> {
+        	if(isPCAL.get() == 0 && isEC.get() == 0)
+        	{
+        		ECdet = new ECMeshMaker();
+        	}
+        	if(isPCAL.get() >= 0 && isPCAL.get() < 6)
+        		ECdet.addPCALpix(detGroup,(int)isPCAL.incrementAndGet());
+        });
         
 
         toolbar.getChildren().add(btnClear);
         toolbar.getChildren().add(btnLoadFtof);
-        //toolbar.getChildren().add(btnLoadEC);
         toolbar.getChildren().add(btnLoadECpix);
         toolbar.getChildren().add(btnLoadPCALpix);        
         
@@ -178,10 +201,12 @@ public class CLAS12Calibration {
 		
 		//set trackers to 0
 		//don't do anything yet
-		isFTOF=0;isEC=0;isPCAL=0;
+		isFTOF.set(0);
+		isEC.set(0);
+		isPCAL.set(0);
 	}
 	
-	
+	//connect click on detector to canvas
 	private final EventHandler<MouseEvent> mouseEventHandler2 = event -> {
         if (event.getEventType() == MouseEvent.MOUSE_PRESSED) {
             if(event.isPrimaryButtonDown()){
@@ -194,7 +219,8 @@ public class CLAS12Calibration {
         } 
     };
 
-    
+    //set listeners for detector specific things
+    //for camera movements and things go to ContentModel.java
     private void setListeners(){
         detScene.addEventHandler(MouseEvent.ANY, mouseEventHandler2);
     }
@@ -211,66 +237,6 @@ public class CLAS12Calibration {
         
     }
 
-	
-/*
-    public static void testEC(){
-        float c, s, xx, yy, zz;
-   
-    	//EC inner
-    	float[] xA1 = {-288.104f,98.442f,98.442f,-281.548f,91.628f,91.628f};
-    	float[] yA1 = {0.0f,-197.976f,197.976f,0.0f,-191.128f,191.128f};
-    	float[] zA1 = {18.57f,18.57f,18.57f,0.0f,0.0f,0.0f};
- 	
-    	for(int i=0; i<6;++i) 
-    	{
-    		//x1[i] -= 333.1042;
-    		zA1[i] += 712.723;
-    		
-    		s = (float) Math.sin(+0.436332313);
-            c = (float) Math.cos(+0.436332313);
-            zz = zA1[i];
-            zA1[i] = (float) (c*zz - s*xA1[i]);
-            xA1[i] = (float) (s*zz + c*xA1[i]);
-    	
-    	}
-    	
-    	Prism2Dto3DMesh pixelA = new Prism2Dto3DMesh(6, xA1, yA1, zA1);
-        final MeshView rectA = new MeshView(pixelA.getMesh());
-        String ECID = String.format("ECID%06d", 1);
-        rectA.setId(ECID);
-        rectA.setMaterial(new PhongMaterial(Color.DARKGREEN));
-        detGroup.getChildren().add(rectA);
-        
-        
-        //EC outer
-        float[] xB1 = {-298.5936f,109.344f,109.344f,-288.104f,98.442f,98.442f};
-    	float[] yB1 = {0.0f,-208.9325f,208.9325f,0.0f,-197.976f,197.976f};
-    	float[] zB1 = {48.282f,48.282f,48.282f,18.57f,18.57f,18.57f};
-    	
-    	for(int i=0; i<6;++i) 
-    	{
-    		//x2[i] -= 333.1042;
-    		zB1[i] += 712.723;
-    		
-    		//testp.rotateX(0.3838074126117121);
-    		//testp.rotateY(-0.43633231299858166);
-    		s = (float) Math.sin(+0.436332313);
-            c = (float) Math.cos(+0.436332313);
-            zz = zB1[i];
-            zB1[i] = (float) (c*zz - s*xB1[i]);
-            xB1[i] = (float) (s*zz + c*xB1[i]);
-   
-    	}
-    	
-    	Prism2Dto3DMesh pixelB = new Prism2Dto3DMesh(6, xB1, yB1, zB1);
-        final MeshView rectB = new MeshView(pixelB.getMesh());
-        ECID = String.format("ECID%06d", 0);
-        rectB.setId(ECID);
-        rectB.setMaterial(new PhongMaterial(Color.DARKRED));
-        detGroup.getChildren().add(rectB);
-    }
-    
-    */
 	
 	
     public static void main(String[] args) {
