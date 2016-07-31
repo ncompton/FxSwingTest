@@ -55,11 +55,16 @@ public class CLAS12Calibration {
 	static ECCal ECcal = null;
 	
 	
+	//constructor
+	//init a JFrame for canvases by calling initCan()
+	//init a JFrame for fxcomponents by calling initDet()
 	public CLAS12Calibration() {
 		initDet();
 		initCan();	
 	}
 	
+	//junk/dummy method until a detector group is created 
+	//and refered to
 	public void initHist(){
 		h1 = new H1D("1", "1", 100,0.0,1.0);
 		h2 = new H1D("2", "2", 100,0.0,2.0);
@@ -70,6 +75,7 @@ public class CLAS12Calibration {
 		
 	}
 	
+	//make all initial swing tabs needed/wanted for general purposes
 	public void initCan(){
 		initHist();
 		c1 = new EmbeddedCanvas();
@@ -93,6 +99,7 @@ public class CLAS12Calibration {
 		canframe.setVisible(true);
 	}
 	
+	//make swing panel to put fx stuff into
 	public void initDet(){
 		isEC.set(0);
 		isPCAL.set(0);
@@ -106,6 +113,9 @@ public class CLAS12Calibration {
         frame.setVisible(true);
 	}
 	
+	//create scene for detector components
+	//set scene as static detScene with objects in group detGroup
+	//eventually can make subgroups with subdetector components
 	public static Scene Detectorpanel(double width, double height)
     { 	
 
@@ -191,6 +201,7 @@ public class CLAS12Calibration {
     	
     }
 	
+	//turn off all detector mesh objects from scene
 	private static void setAllDetOff(){
 		//clear detectorview
 		detGroup.getChildren().clear();
@@ -237,7 +248,6 @@ public class CLAS12Calibration {
         
     }
 
-	
 	
     public static void main(String[] args) {
     	CLAS12Calibration cal = new CLAS12Calibration();
